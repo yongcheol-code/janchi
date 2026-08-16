@@ -61,7 +61,7 @@ export const CONFIG = {
   },
   jeju: {
     label: "제주 잔치",
-    dateLabel: "일정 조율 중",
+    dateLabel: "11월 예정",
     place: "제주 잔치",
     addr: "",
     addrDisplay: "장소 미정",
@@ -69,7 +69,7 @@ export const CONFIG = {
     lat: null,
     lng: null,
     venuePhoto: null,
-    mapDesc: "제주에서 한 번 더 모입니다. 날짜와 장소가 정해지면 이 자리에 올릴게요. 비행기표는 미리 봐두세요.",
+    mapDesc: "11월 중 제주에서 한 번 더 모입니다. 정확한 날짜와 장소는 정해지면 바로 올릴게요. 비행기표는 미리 봐두세요.",
   },
 
   accounts: [
