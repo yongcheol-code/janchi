@@ -1,8 +1,16 @@
 import "./styles.css";
 import { CONFIG } from "./config.js";
 import { createHeartBurst } from "./hearts.js";
-import { logAndSend, fetchFeed, submitReply as sheetSubmitReply } from "./sheet.js";
-import { getOwnerToken, getMyCommentIds, rememberMyComment, forgetMyComment, newCommentId } from "./identity.js";
+import { logAndSend, fetchFeed, submitReply as sheetSubmitReply, verifyPasscode } from "./sheet.js";
+import {
+  getOwnerToken,
+  getMyCommentIds,
+  rememberMyComment,
+  forgetMyComment,
+  newCommentId,
+  isCoupleVerified,
+  setCoupleVerified,
+} from "./identity.js";
 import {
   buildHeader,
   buildCoverPost,
@@ -46,6 +54,7 @@ export function mountApp(root) {
     comments: [...CONFIG.comments],
     likedCommentIds: new Set(),
     myCommentIds: getMyCommentIds(),
+    coupleVerified: isCoupleVerified(),
     saved: false,
     calTab: "party",
     mapTab: "party",
@@ -85,8 +94,6 @@ export function mountApp(root) {
     rsvpModal.setOpen(name === "rsvp");
     accountModal.setOpen(name === "account");
   }
-
-  const MAP_TABS = ["party", "wedding", "jeju"];
 
   // 하트 폭죽은 클릭마다 터지지만, 서버 전송은 900ms 동안 모아서 한 번에 보낸다.
   const pendingLikes = {};
@@ -227,6 +234,28 @@ export function mountApp(root) {
       state.composerFor = null;
       showOverlay("composer", { reply: { id: comment.id, existingReply: comment.reply || "" } });
     },
+    openCoupleUnlock() {
+      state.composerFor = null;
+      showOverlay("composer", { unlock: true });
+    },
+    async verifyCouple(passcode) {
+      try {
+        const res = await verifyPasscode(passcode);
+        if (res?.ok) {
+          setCoupleVerified();
+          state.coupleVerified = true;
+          showOverlay(null);
+          notify();
+          toast.show("인증됐어요. 이 기기에서 답글을 달 수 있어요");
+          return true;
+        }
+        toast.show(res?.error || "코드가 올바르지 않아요");
+        return false;
+      } catch {
+        toast.show("인증에 실패했어요. 다시 시도해 주세요");
+        return false;
+      }
+    },
     async submitReply({ id, passcode, reply }) {
       try {
         const res = await sheetSubmitReply({ id, passcode, reply });
@@ -267,16 +296,6 @@ export function mountApp(root) {
       copyText(value);
       toast.show("계좌번호를 복사했어요");
     },
-    copyAddress() {
-      const idx = MAP_TABS.indexOf(state.mapTab);
-      const addr = [CONFIG.party.addr, CONFIG.wedding.addr, ""][idx];
-      if (!addr) {
-        toast.show("제주 장소는 확정되면 안내드릴게요");
-        return;
-      }
-      copyText(addr);
-      toast.show("주소를 복사했어요");
-    },
     copyLink() {
       copyText(CONFIG.shareLinkUrl);
       toast.show("링크를 복사했어요");
@@ -287,18 +306,12 @@ export function mountApp(root) {
     },
     openRoute(app) {
       const v = CONFIG[state.mapTab];
-      if (!v.lat) {
+      const url = app === "naver" ? v.naverMapUrl : v.kakaoMapUrl;
+      if (!url) {
         toast.show("제주 장소는 확정되면 안내드릴게요");
         return;
       }
-      const name = encodeURIComponent(v.place);
-      const urls = {
-        naver: `https://map.naver.com/p/search/${encodeURIComponent(`${v.place} ${v.addr}`)}`,
-        kakao: `https://map.kakao.com/link/to/${name},${v.lat},${v.lng}`,
-        // 티맵은 앱 스킴 기반이라 모바일에서만 정상 동작. appKey는 발급 전까지 비워둠.
-        tmap: `https://apis.openapi.sk.com/tmap/app/routes?appKey=&name=${name}&lon=${v.lng}&lat=${v.lat}`,
-      };
-      window.open(urls[app] || urls.kakao, "_blank");
+      window.open(url, "_blank");
     },
   };
 

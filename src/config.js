@@ -30,8 +30,11 @@ export const CONFIG = {
     phone: "", // 전화번호 미기재(요청 반영)
     lat: 37.5406,
     lng: 126.9695,
+    naverMapUrl: "https://naver.me/5XpnP6F3",
+    kakaoMapUrl: "https://place.map.kakao.com/693628217",
     venuePhoto: "venue-party.jpg",
-    mapDesc: "편하신 시간에 자유롭게 들러주세요! 지하철 4호선 숙대입구역 8번/9번 출구 또는 1호선 남영역 1번 출구를 이용해주세요. 주차는 인근 공영주차장을 이용해 주세요.",
+    mapDesc:
+      "편하신 시간에 자유롭게 들러주세요!<br>지하철 4호선 숙대입구역 8번/9번 출구 또는 1호선 남영역 1번 출구를 이용해주세요.<br>주차는 인근 공영주차장을 이용해 주세요.",
     schedule: [
       { time: "16:00", title: "오픈", desc: "오시고 싶은 시간에 오셔서, 가고 싶을 때 가시면 됩니다", accent: false },
       { time: "20:00", title: "메인 행사", desc: "신랑신부 인사 & 럭키드로우, 딱 이 시간에만 진행합니다", accent: true },
@@ -53,8 +56,10 @@ export const CONFIG = {
     phone: "02-0000-0000", // TODO: 실제 번호로 교체
     lat: 37.5236,
     lng: 127.0473,
+    naverMapUrl: "https://naver.me/5ne4oSX1",
+    kakaoMapUrl: "https://place.map.kakao.com/23182563",
     venuePhoto: "venue-wedding.jpg",
-    mapDesc: "지하 주차 2시간 무료. 7호선 청담역 13번 출구에서 도보 8분, 셔틀은 10분 간격으로 운행합니다.",
+    mapDesc: "지하 주차 2시간 무료.<br>7호선 청담역 13번 출구에서 도보 8분, 셔틀은 10분 간격으로 운행합니다.",
     ceremonyTime: "11:00",
     ceremonyMeridiem: "오전",
     ceremonyDesc: "시간이 정확합니다. 10시 40분까지 오시면 사진도 함께 남길 수 있어요",
@@ -69,7 +74,8 @@ export const CONFIG = {
     lat: null,
     lng: null,
     venuePhoto: null,
-    mapDesc: "11월 중 제주에서 한 번 더 모입니다. 정확한 날짜와 장소는 정해지면 바로 올릴게요. 비행기표는 미리 봐두세요.",
+    mapDesc:
+      "11월 중 제주에서 한 번 더 모입니다.<br>정확한 날짜와 장소는 정해지면 바로 올릴게요.<br>비행기표는 미리 봐두세요.",
   },
 
   accounts: [

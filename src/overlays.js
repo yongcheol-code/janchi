@@ -86,9 +86,26 @@ export function buildComposerSheet(host, backdrop, actions) {
 
   let editingId = null;
   let replyId = null;
+  let unlockMode = false;
 
   async function submit() {
     const text = textInput.value.trim();
+
+    if (unlockMode) {
+      const passcode = passcodeInput.value.trim();
+      if (!passcode) {
+        actions.toastShow("비밀코드를 입력해 주세요");
+        return;
+      }
+      const prevLabel = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = "확인 중…";
+      await actions.verifyCouple(passcode);
+      submitBtn.disabled = false;
+      submitBtn.textContent = prevLabel;
+      passcodeInput.value = "";
+      return;
+    }
 
     if (replyId) {
       const passcode = passcodeInput.value.trim();
@@ -140,8 +157,18 @@ export function buildComposerSheet(host, backdrop, actions) {
       if (!open) return;
       editingId = opts.edit?.id ?? null;
       replyId = opts.reply?.id ?? null;
+      unlockMode = !!opts.unlock;
 
-      if (replyId) {
+      if (unlockMode) {
+        titleEl.textContent = "신랑신부 인증";
+        infoText.hidden = true;
+        nameInput.hidden = true;
+        textInput.hidden = true;
+        passcodeInput.hidden = false;
+        passcodeInput.value = "";
+        submitBtn.textContent = "인증하기";
+      } else if (replyId) {
+        textInput.hidden = false;
         titleEl.textContent = "용철·유진 답글";
         infoText.hidden = true;
         nameInput.hidden = true;
@@ -151,6 +178,7 @@ export function buildComposerSheet(host, backdrop, actions) {
         textInput.value = opts.reply.existingReply ?? "";
         submitBtn.textContent = "답글 저장";
       } else if (editingId) {
+        textInput.hidden = false;
         titleEl.textContent = "댓글 수정";
         infoText.hidden = true;
         nameInput.hidden = true;
@@ -159,6 +187,7 @@ export function buildComposerSheet(host, backdrop, actions) {
         textInput.value = opts.edit.text ?? "";
         submitBtn.textContent = "저장";
       } else {
+        textInput.hidden = false;
         titleEl.textContent = "축하 댓글 남기기";
         infoText.hidden = false;
         nameInput.hidden = false;

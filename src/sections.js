@@ -247,7 +247,7 @@ function buildPartyPanel() {
   panel.appendChild(el("div", "wed-calendar__hr"));
 
   const countdown = el("div", "wed-calendar__countdown");
-  const group = el("div");
+  const group = el("div", "wed-calendar__countdown-group");
   group.appendChild(el("span", "wed-calendar__countdown-label", "청첩장 파티까지"));
   group.appendChild(el("span", "wed-calendar__countdown-place", p.placeSub));
   countdown.appendChild(group);
@@ -287,7 +287,7 @@ function buildWeddingPanel() {
   panel.appendChild(el("div", "wed-calendar__hr"));
 
   const countdown = el("div", "wed-calendar__countdown");
-  const group = el("div");
+  const group = el("div", "wed-calendar__countdown-group");
   group.appendChild(el("span", "wed-calendar__countdown-label", "서울 결혼식까지"));
   group.appendChild(el("span", "wed-calendar__countdown-place", w.floor));
   countdown.appendChild(group);
@@ -333,11 +333,15 @@ export function buildCalendarSection(actions, calendarRef) {
 
   const rsvpBtn = el("button", "wed-calendar__rsvp-btn");
   rsvpBtn.appendChild(icon("checkCircle", 18));
-  rsvpBtn.appendChild(document.createTextNode("참석 여부 알리기"));
+  rsvpBtn.appendChild(document.createTextNode("(필수) 참석 여부 알리기"));
   rsvpBtn.addEventListener("click", () => actions.openRsvp());
   card.appendChild(rsvpBtn);
   card.appendChild(
-    el("span", "wed-calendar__hint", "두 일정 각각 알려주시면 자리·식사 준비에 큰 도움이 됩니다")
+    el(
+      "span",
+      "wed-calendar__hint",
+      "귀한 걸음 해주시는 분들께 여유롭고 맛있는 식사와 술을 대접해 드리고 싶습니다. 🥂 원활한 인원 파악을 위해 두 일정의 참석 여부를 각각 알려주시면 너무나 감사하겠습니다!"
+    )
   );
 
   section.appendChild(card);
@@ -363,10 +367,26 @@ export function buildAllComments(state, actions, guestRef) {
   const head = el("div", "wed-post-head");
   head.appendChild(buildAvatar());
   const meta = el("div", "wed-post-head__meta");
-  meta.appendChild(el("span", "wed-post-head__name", "모든 댓글"));
+  const titleSpan = el("span", "wed-post-head__name", "모든 댓글");
+  meta.appendChild(titleSpan);
   meta.appendChild(el("span", "wed-post-head__sub", "게시물에 달린 축하 메시지가 모두 모입니다"));
   head.appendChild(meta);
   article.appendChild(head);
+
+  // 신랑신부만 아는 숨겨진 진입점: 제목을 짧은 시간 안에 5번 탭하면 인증창이 뜬다.
+  let unlockTaps = 0;
+  let unlockTapTimer = null;
+  titleSpan.addEventListener("click", () => {
+    unlockTaps += 1;
+    clearTimeout(unlockTapTimer);
+    unlockTapTimer = setTimeout(() => {
+      unlockTaps = 0;
+    }, 2000);
+    if (unlockTaps >= 5) {
+      unlockTaps = 0;
+      actions.openCoupleUnlock();
+    }
+  });
 
   const metaRow = el("div", "wed-allcomments__meta-row");
   const countLabel = el("span", "", "");
@@ -397,9 +417,11 @@ export function buildAllComments(state, actions, guestRef) {
       meta2.appendChild(editBtn);
       meta2.appendChild(deleteBtn);
     }
-    const replyBtn = el("button", "wed-allcomments__own-btn", c.reply ? "답글 수정" : "답글 달기");
-    replyBtn.addEventListener("click", () => actions.openReplyComposer(c));
-    meta2.appendChild(replyBtn);
+    if (s.coupleVerified) {
+      const replyBtn = el("button", "wed-allcomments__own-btn", c.reply ? "답글 수정" : "답글 달기");
+      replyBtn.addEventListener("click", () => actions.openReplyComposer(c));
+      meta2.appendChild(replyBtn);
+    }
     body.appendChild(meta2);
 
     if (c.reply) {
@@ -475,21 +497,14 @@ export function buildMapSection(state, actions, mapRef) {
   const routeSection = el("div", "wed-map__route");
   routeSection.appendChild(el("span", "wed-map__route-label", "길찾기"));
   const routeGrid = el("div", "wed-map__route-grid");
-  [
-    { app: "naver", label: "네이버지도" },
-    { app: "kakao", label: "카카오맵" },
-    { app: "tmap", label: "티맵" },
-  ].forEach(({ app, label }) => {
-    const btn = el("button", "wed-map__route-btn", label);
+  const routeBtns = {};
+  ["naver", "kakao"].forEach((app) => {
+    const btn = el("button", "wed-map__route-btn", app === "naver" ? "네이버지도" : "카카오맵");
     btn.addEventListener("click", () => actions.openRoute(app));
     routeGrid.appendChild(btn);
+    routeBtns[app] = btn;
   });
   routeSection.appendChild(routeGrid);
-  const copyBtn = el("button", "wed-map__copy");
-  copyBtn.appendChild(icon("copy", 18));
-  copyBtn.appendChild(document.createTextNode("주소 복사하기"));
-  copyBtn.addEventListener("click", () => actions.copyAddress());
-  routeSection.appendChild(copyBtn);
   body.appendChild(routeSection);
 
   let currentTab = null;
@@ -516,7 +531,7 @@ export function buildMapSection(state, actions, mapRef) {
           : s.mapTab === "party"
             ? `${data.dateLabel} · 청첩장 파티`
             : `${data.label} · ${data.dateLabel}`;
-      detailDesc.textContent = data.mapDesc;
+      detailDesc.innerHTML = data.mapDesc;
     },
   };
 }

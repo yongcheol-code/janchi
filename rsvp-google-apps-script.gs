@@ -102,6 +102,9 @@ function doGet(e) {
   if (params.action === 'reply') {
     return respond_(params, handleReply_(params));
   }
+  if (params.action === 'verify') {
+    return respond_(params, verifyPasscode_(params));
+  }
 
   var guestSheet = getSheet_(GUEST_SHEET, GUEST_HEADERS);
   var rows = guestSheet.getLastRow() > 1
@@ -150,6 +153,19 @@ function handleReply_(params) {
   } finally {
     lock.releaseLock();
   }
+}
+
+/**
+ * 답글 버튼을 화면에 보이게 할지만 확인하는 용도(실제 데이터 변경 없음).
+ * 특정 댓글과 무관하게 코드만 검증해, 신랑신부가 이 기기에서 "인증"을 한 번만 하면 되게 한다.
+ */
+function verifyPasscode_(params) {
+  var expected = PropertiesService.getScriptProperties().getProperty('COUPLE_PASSCODE');
+  if (!expected) return { ok: false, error: '답글 비밀코드가 아직 설정되지 않았어요' };
+  if (String(params.passcode || '') !== String(expected)) {
+    return { ok: false, error: '코드가 올바르지 않아요' };
+  }
+  return { ok: true };
 }
 
 function respond_(params, payload) {

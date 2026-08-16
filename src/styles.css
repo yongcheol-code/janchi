@@ -490,6 +490,11 @@ button {
   align-items: center;
   justify-content: space-between;
 }
+.wed-calendar__countdown-group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
 .wed-calendar__countdown-label {
   font-size: 13px;
   color: var(--sf-content-02);

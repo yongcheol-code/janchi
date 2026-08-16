@@ -61,6 +61,41 @@ export function fetchFeed() {
   });
 }
 
+// 신랑신부 인증(이 기기에서 답글 버튼을 보이게 할지 확인) — 특정 댓글과 무관하게 코드만 검증.
+export function verifyPasscode(passcode) {
+  return new Promise((resolve, reject) => {
+    if (!CONFIG.rsvpEndpoint) {
+      reject(new Error("rsvpEndpoint not set"));
+      return;
+    }
+    const cb = `__wed_verify_${jsonpCounter++}`;
+    const script = document.createElement("script");
+    const cleanup = () => {
+      delete window[cb];
+      script.remove();
+    };
+    const timeout = setTimeout(() => {
+      cleanup();
+      reject(new Error("verifyPasscode timeout"));
+    }, 8000);
+
+    window[cb] = (data) => {
+      clearTimeout(timeout);
+      cleanup();
+      resolve(data);
+    };
+
+    const params = new URLSearchParams({ action: "verify", passcode: passcode, callback: cb });
+    script.src = `${CONFIG.rsvpEndpoint}?${params.toString()}`;
+    script.onerror = () => {
+      clearTimeout(timeout);
+      cleanup();
+      reject(new Error("verifyPasscode load error"));
+    };
+    document.body.appendChild(script);
+  });
+}
+
 // 용철·유진 답글 등록/수정. 비밀코드 확인 결과를 바로 읽어야 해서 no-cors POST 대신
 // fetchFeed와 같은 JSONP GET 경로를 쓴다(서버: doGet의 ?action=reply 분기).
 export function submitReply({ id, passcode, reply }) {
