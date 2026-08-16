@@ -269,6 +269,28 @@ button {
   height: 100%;
   scroll-snap-align: start;
 }
+.wed-carousel__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.35);
+  color: #fff;
+  cursor: pointer;
+  z-index: 2;
+}
+.wed-carousel__nav--prev {
+  left: 10px;
+}
+.wed-carousel__nav--next {
+  right: 10px;
+}
 .media-slot {
   position: absolute;
   inset: 0;

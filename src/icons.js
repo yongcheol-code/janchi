@@ -17,6 +17,7 @@ export const ICONS = {
   plus: s('<path d="M12 5v14M5 12h14"/>'),
   minus: s('<path d="M5 12h14"/>'),
   chevronRight: s('<path d="M9 5l7 7-7 7"/>'),
+  chevronLeft: s('<path d="M15 5l-7 7 7 7"/>'),
   moreHorizontal: `<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg>`,
   circleCheckFill: `<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/><path d="M8 12.5l2.7 2.7L16.3 9" stroke="#1a1a1a" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
   checkCircle: s('<circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.7 2.7L16.3 9"/>'),

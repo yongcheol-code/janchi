@@ -87,14 +87,32 @@ function buildMediaCarousel(files, postKey, actions, placeholder) {
   track.addEventListener("dblclick", (e) => actions.onMediaDouble(e, postKey));
 
   if (files.length > 1) {
+    const prevBtn = el("button", "wed-carousel__nav wed-carousel__nav--prev");
+    prevBtn.appendChild(icon("chevronLeft", 20));
+    prevBtn.setAttribute("aria-label", "이전 사진");
+    const nextBtn = el("button", "wed-carousel__nav wed-carousel__nav--next");
+    nextBtn.appendChild(icon("chevronRight", 20));
+    nextBtn.setAttribute("aria-label", "다음 사진");
+    wrap.appendChild(prevBtn);
+    wrap.appendChild(nextBtn);
+
+    const currentIndex = () => Math.round(track.scrollLeft / (track.clientWidth || 1));
+    const goTo = (i) => track.scrollTo({ left: i * track.clientWidth, behavior: "smooth" });
+    prevBtn.addEventListener("click", () => goTo(Math.max(0, currentIndex() - 1)));
+    nextBtn.addEventListener("click", () => goTo(Math.min(files.length - 1, currentIndex() + 1)));
+
     let raf = null;
+    function syncNav() {
+      const index = currentIndex();
+      chip.textContent = `${index + 1}/${files.length} · 두 번 탭 ❤︎`;
+      prevBtn.hidden = index <= 0;
+      nextBtn.hidden = index >= files.length - 1;
+    }
     track.addEventListener("scroll", () => {
       cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        const index = Math.round(track.scrollLeft / track.clientWidth);
-        chip.textContent = `${index + 1}/${files.length} · 두 번 탭 ❤︎`;
-      });
+      raf = requestAnimationFrame(syncNav);
     });
+    syncNav();
   }
 
   return wrap;
