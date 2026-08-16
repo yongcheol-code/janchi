@@ -148,4 +148,6 @@ export const CONFIG = {
   shareLinkUrl: "https://wedding.example.com/yongchul-yujin",
 };
 
-export const MEDIA_BASE = "/media/";
+// import.meta.env.BASE_URL은 vite.config.js의 base 값을 그대로 반영한다(로컬 "/", 배포 "/janchi/" 등).
+// 여기를 "/media/"로 하드코딩하면 서브경로 배포 시 실제 파일 경로와 어긋나 이미지가 전부 깨진다.
+export const MEDIA_BASE = `${import.meta.env.BASE_URL}media/`;
