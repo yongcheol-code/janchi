@@ -118,7 +118,7 @@ export const CONFIG = {
     },
     {
       label: "우리의 화보",
-      caption: "2026년 12월 6일(일)<br>드디어 저희가 결혼합니다.",
+      caption: "드디어 저희가 결혼합니다.<br>10월 24일(토) 청첩장 파티<br>12월 6일(일) 서울 결혼식",
       photos: [
         "story-b-1.jpg", "story-b-2.jpg", "story-b-3.jpg", "story-b-4.jpg", "story-b-5.jpg",
         "story-b-6.jpg", "story-b-7.jpg", "story-b-8.jpg", "story-b-9.jpg", "story-b-10.jpg",
@@ -143,7 +143,6 @@ export const CONFIG = {
     { id: 4, post: "cover", name: "minho__", initial: "ㅁ", text: "축의금은 성의껏, 밥은 배부르게 먹겠습니다", time: "8시간", likes: 5, liked: false },
     { id: 5, post: "guest", name: "jiwon.lee", initial: "ㅈ", text: "부케 예약합니다 (진심)", time: "12시간", likes: 17, liked: false },
   ],
-  commentPostLabels: { cover: "결혼식 스냅", post2: "만난 이야기", guest: "방명록" },
 
   shareLinkUrl: "https://wedding.example.com/yongchul-yujin",
 };

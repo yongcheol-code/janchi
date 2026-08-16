@@ -259,6 +259,9 @@ button {
   height: 100%;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
+  /* 세로 스크롤 피드 안에 중첩된 가로 캐러셀이라, 터치 제스처가 부모(세로)로 새는 걸 막는다 */
+  touch-action: pan-x;
+  overscroll-behavior-x: contain;
 }
 .wed-carousel__slide {
   position: relative;
@@ -671,19 +674,22 @@ button {
   gap: 10px;
   align-items: flex-start;
 }
-.wed-allcomments__badge {
-  padding: 2px 7px;
-  border-radius: 999px;
-  background: var(--sf-gray-40);
-  color: var(--sf-content-02);
-  font-weight: 600;
-}
 .wed-allcomments__meta {
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 11px;
   color: var(--sf-content-03);
+}
+.wed-allcomments__own-btn {
+  border: 0;
+  background: none;
+  padding: 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--sf-content-03);
+  text-decoration: underline;
+  cursor: pointer;
 }
 .wed-allcomments__like-btn {
   flex: none;

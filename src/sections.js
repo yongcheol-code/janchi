@@ -361,7 +361,7 @@ export function buildAllComments(state, actions, guestRef) {
   const list = el("div", "wed-allcomments__list");
   article.appendChild(list);
 
-  function buildRow(c) {
+  function buildRow(c, s) {
     const row = el("div", "wed-allcomments__row");
     row.appendChild(el("span", "wed-comment__avatar", c.initial));
     const body = el("div", "wed-comment__body");
@@ -369,15 +369,23 @@ export function buildAllComments(state, actions, guestRef) {
     text.innerHTML = `<b style="font-weight:600">${escapeHtml(c.name)}</b> ${escapeHtml(c.text)}`;
     body.appendChild(text);
     const meta2 = el("div", "wed-allcomments__meta");
-    meta2.appendChild(el("span", "wed-allcomments__badge", CONFIG.commentPostLabels[c.post] || "방명록"));
     meta2.appendChild(el("span", "", c.time));
     meta2.appendChild(el("span", "", `좋아요 ${c.likes}개`));
+    if (s.myCommentIds.has(c.id)) {
+      const editBtn = el("button", "wed-allcomments__own-btn", "수정");
+      editBtn.addEventListener("click", () => actions.openCommentEditor(c));
+      const deleteBtn = el("button", "wed-allcomments__own-btn", "삭제");
+      deleteBtn.addEventListener("click", () => actions.deleteComment(c.id));
+      meta2.appendChild(editBtn);
+      meta2.appendChild(deleteBtn);
+    }
     body.appendChild(meta2);
     row.appendChild(body);
 
-    const likeBtn = el("button", `wed-allcomments__like-btn${c.liked ? " is-liked" : ""}`);
-    likeBtn.appendChild(icon(c.liked ? "heartFill" : "heart", 15));
-    likeBtn.addEventListener("click", () => actions.toggleCommentLike(c.id));
+    const liked = s.likedCommentIds.has(c.id);
+    const likeBtn = el("button", `wed-allcomments__like-btn${liked ? " is-liked" : ""}`);
+    likeBtn.appendChild(icon(liked ? "heartFill" : "heart", 15));
+    likeBtn.addEventListener("click", () => actions.likeComment(c.id));
     row.appendChild(likeBtn);
     return row;
   }
@@ -388,7 +396,7 @@ export function buildAllComments(state, actions, guestRef) {
       countLabel.textContent = `댓글 ${s.comments.length}개`;
       const total = Object.values(s.postLikes).reduce((sum, n) => sum + n, 0);
       totalLikesLabel.textContent = `좋아요 합계 ${total.toLocaleString("ko-KR")}개`;
-      list.replaceChildren(...s.comments.map(buildRow));
+      list.replaceChildren(...s.comments.map((c) => buildRow(c, s)));
     },
   };
 }

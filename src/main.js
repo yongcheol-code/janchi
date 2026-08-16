@@ -1,7 +1,8 @@
 import "./styles.css";
 import { CONFIG } from "./config.js";
 import { createHeartBurst } from "./hearts.js";
-import { logAndSend } from "./sheet.js";
+import { logAndSend, fetchFeed } from "./sheet.js";
+import { getOwnerToken, getMyCommentIds, rememberMyComment, forgetMyComment, newCommentId } from "./identity.js";
 import {
   buildHeader,
   buildCoverPost,
@@ -21,15 +22,30 @@ import {
   buildToast,
 } from "./overlays.js";
 
+function formatRelativeTime(iso) {
+  const then = new Date(iso).getTime();
+  if (Number.isNaN(then)) return "";
+  const diffMin = Math.floor((Date.now() - then) / 60000);
+  if (diffMin < 1) return "방금";
+  if (diffMin < 60) return `${diffMin}분 전`;
+  const diffHour = Math.floor(diffMin / 60);
+  if (diffHour < 24) return `${diffHour}시간 전`;
+  return `${Math.floor(diffHour / 24)}일 전`;
+}
+
 export function mountApp(root) {
   const shell = document.createElement("div");
   shell.className = "wed-shell";
   root.appendChild(shell);
 
+  const ownerToken = getOwnerToken();
+
   const state = {
     postLikes: { ...CONFIG.likeSeed },
     postLiked: {},
     comments: [...CONFIG.comments],
+    likedCommentIds: new Set(),
+    myCommentIds: getMyCommentIds(),
     saved: false,
     calTab: "party",
     mapTab: "party",
@@ -62,15 +78,35 @@ export function mountApp(root) {
     navigator.clipboard?.writeText(text).catch(() => {});
   }
 
-  function showOverlay(name) {
+  function showOverlay(name, composerOpts) {
     backdrop.hidden = name === null;
-    composerSheet.setOpen(name === "composer", state.guestName);
+    composerSheet.setOpen(name === "composer", composerOpts);
     shareSheet.setOpen(name === "share");
     rsvpModal.setOpen(name === "rsvp");
     accountModal.setOpen(name === "account");
   }
 
   const MAP_TABS = ["party", "wedding", "jeju"];
+
+  // 하트 폭죽은 클릭마다 터지지만, 서버 전송은 900ms 동안 모아서 한 번에 보낸다.
+  const pendingLikes = {};
+  const likeTimers = {};
+  function queueLikeSend(key) {
+    pendingLikes[key] = (pendingLikes[key] || 0) + 1;
+    clearTimeout(likeTimers[key]);
+    likeTimers[key] = setTimeout(() => {
+      const count = pendingLikes[key];
+      pendingLikes[key] = 0;
+      logAndSend({ type: "like", key, count });
+    }, 900);
+  }
+
+  function bumpPostLike(postKey) {
+    state.postLikes[postKey] = (state.postLikes[postKey] || 0) + 1;
+    state.postLiked[postKey] = true;
+    notify();
+    queueLikeSend(postKey);
+  }
 
   const actions = {
     toastShow(message) {
@@ -79,15 +115,11 @@ export function mountApp(root) {
     onLike(e, postKey) {
       const r = e.currentTarget.getBoundingClientRect();
       heartBurst.spawnAt(r.left + r.width / 2, r.top + r.height / 2);
-      state.postLikes[postKey] = (state.postLikes[postKey] || 0) + 1;
-      state.postLiked[postKey] = true;
-      notify();
+      bumpPostLike(postKey);
     },
     onMediaDouble(e, postKey) {
       heartBurst.spawnAt(e.clientX, e.clientY);
-      state.postLikes[postKey] = (state.postLikes[postKey] || 0) + 1;
-      state.postLiked[postKey] = true;
-      notify();
+      bumpPostLike(postKey);
     },
     onSave() {
       state.saved = !state.saved;
@@ -96,7 +128,11 @@ export function mountApp(root) {
     },
     openComposer(postKey) {
       state.composerFor = postKey;
-      showOverlay("composer");
+      showOverlay("composer", { guestName: state.guestName });
+    },
+    openCommentEditor(comment) {
+      state.composerFor = null;
+      showOverlay("composer", { edit: { id: comment.id, text: comment.text } });
     },
     openShare() {
       showOverlay("share");
@@ -140,24 +176,52 @@ export function mountApp(root) {
     submitComment({ name, text }) {
       state.guestName = name;
       const post = state.composerFor || "guest";
+      const id = newCommentId();
       state.comments = [
-        { id: Date.now(), post, name, initial: name.charAt(0), text, time: "방금", likes: 0, liked: false },
+        { id, post, name, initial: name.charAt(0), text, time: "방금", likes: 0 },
         ...state.comments,
       ];
+      rememberMyComment(id);
+      state.myCommentIds = getMyCommentIds();
       state.composerFor = null;
       showOverlay(null);
       notify();
       toast.show("댓글을 남겼어요");
       logAndSend(
-        { type: "guestbook", post, name, message: text, submittedAt: new Date().toISOString() },
+        {
+          type: "guestbook",
+          id,
+          post,
+          name,
+          message: text,
+          ownerToken,
+          submittedAt: new Date().toISOString(),
+        },
         "wed-guestbook-log"
       );
     },
-    toggleCommentLike(id) {
-      state.comments = state.comments.map((c) =>
-        c.id === id ? { ...c, liked: !c.liked, likes: c.likes + (c.liked ? -1 : 1) } : c
-      );
+    editComment(id, text) {
+      state.comments = state.comments.map((c) => (c.id === id ? { ...c, text } : c));
+      showOverlay(null);
       notify();
+      toast.show("댓글을 수정했어요");
+      logAndSend({ type: "comment_edit", id, ownerToken, message: text });
+    },
+    deleteComment(id) {
+      if (!window.confirm("댓글을 삭제할까요?")) return;
+      state.comments = state.comments.filter((c) => c.id !== id);
+      forgetMyComment(id);
+      state.myCommentIds = getMyCommentIds();
+      notify();
+      toast.show("댓글을 삭제했어요");
+      logAndSend({ type: "comment_delete", id, ownerToken });
+    },
+    likeComment(id) {
+      if (state.likedCommentIds.has(id)) return;
+      state.likedCommentIds.add(id);
+      state.comments = state.comments.map((c) => (c.id === id ? { ...c, likes: c.likes + 1 } : c));
+      notify();
+      logAndSend({ type: "comment_like", id });
     },
     async submitRsvp({ name, phone, attendParty, attendWedding, count }) {
       const payload = {
@@ -238,6 +302,25 @@ export function mountApp(root) {
   shell.appendChild(overlayHost);
 
   notify();
+
+  // 모두가 같은 방명록/좋아요를 보도록 시트에서 최신 데이터를 받아 시드 데이터 위에 얹는다.
+  fetchFeed()
+    .then((data) => {
+      if (!data) return;
+      if (data.postLikes) state.postLikes = { ...data.postLikes };
+      if (Array.isArray(data.comments)) {
+        const fromSheet = data.comments.map((c) => ({
+          ...c,
+          initial: c.name?.charAt(0) || "나",
+          time: formatRelativeTime(c.time) || c.time,
+        }));
+        state.comments = [...fromSheet, ...CONFIG.comments];
+      }
+      notify();
+    })
+    .catch(() => {
+      // 엔드포인트 미설정이거나 네트워크 실패 — 시드 데이터만으로 계속 진행
+    });
 
   return { shell };
 }

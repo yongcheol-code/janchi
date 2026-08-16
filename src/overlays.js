@@ -50,13 +50,15 @@ function buildModalShell(host, title) {
 }
 
 // ---------- 댓글 작성 바텀시트 (게시물 말풍선에서 진입) ----------
+// 같은 시트를 작성/수정 두 모드로 쓴다 — setOpen(true, { edit: {id,text} })이면 수정 모드.
 export function buildComposerSheet(host, backdrop, actions) {
   const { sheet, body, closeBtn, titleEl } = buildSheetShell(host, "축하 댓글 남기기");
+  const infoText = el("p", "", "남기신 댓글은 아래 '모든 댓글'에 함께 쌓입니다.");
   const form = el("div");
   form.style.display = "flex";
   form.style.flexDirection = "column";
   form.style.gap = "12px";
-  form.appendChild(el("p", "", "남기신 댓글은 아래 '모든 댓글'에 함께 쌓입니다."));
+  form.appendChild(infoText);
 
   const nameInput = el("input");
   nameInput.type = "text";
@@ -75,10 +77,16 @@ export function buildComposerSheet(host, backdrop, actions) {
   form.appendChild(submitBtn);
   body.appendChild(form);
 
+  let editingId = null;
+
   function submit() {
     const text = textInput.value.trim();
-    const name = nameInput.value.trim();
     if (!text) return;
+    if (editingId) {
+      actions.editComment(editingId, text);
+      return;
+    }
+    const name = nameInput.value.trim();
     if (!name) {
       actions.toastShow("이름을 함께 남겨주세요");
       return;
@@ -99,9 +107,24 @@ export function buildComposerSheet(host, backdrop, actions) {
 
   return {
     sheet,
-    setOpen(open, guestName) {
+    setOpen(open, opts = {}) {
       sheet.hidden = !open;
-      if (open) nameInput.value = guestName ?? "";
+      if (!open) return;
+      editingId = opts.edit?.id ?? null;
+      if (editingId) {
+        titleEl.textContent = "댓글 수정";
+        infoText.hidden = true;
+        nameInput.hidden = true;
+        textInput.value = opts.edit.text ?? "";
+        submitBtn.textContent = "저장";
+      } else {
+        titleEl.textContent = "축하 댓글 남기기";
+        infoText.hidden = false;
+        nameInput.hidden = false;
+        nameInput.value = opts.guestName ?? "";
+        textInput.value = "";
+        submitBtn.textContent = "게시";
+      }
     },
   };
 }
