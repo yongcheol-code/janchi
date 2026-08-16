@@ -1,0 +1,35 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# 원본 업로드(비크롭 사진/영상) — 절대 커밋하지 않음. public/media 의 가공본만 배포한다.
+uploads/
+
+# 디자인 핸드오프 프로토타입 전용 파일 — 실제 앱은 src/ 에서 재구현했으므로 커밋 불필요
+_ds/
+design/
+Wedding Reels Invitation.dc.html
+support.js
+media-slot.js
+image-slot.js
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
