@@ -60,3 +60,45 @@ export function fetchFeed() {
     document.body.appendChild(script);
   });
 }
+
+// 용철·유진 답글 등록/수정. 비밀코드 확인 결과를 바로 읽어야 해서 no-cors POST 대신
+// fetchFeed와 같은 JSONP GET 경로를 쓴다(서버: doGet의 ?action=reply 분기).
+export function submitReply({ id, passcode, reply }) {
+  return new Promise((resolve, reject) => {
+    if (!CONFIG.rsvpEndpoint) {
+      reject(new Error("rsvpEndpoint not set"));
+      return;
+    }
+    const cb = `__wed_reply_${jsonpCounter++}`;
+    const script = document.createElement("script");
+    const cleanup = () => {
+      delete window[cb];
+      script.remove();
+    };
+    const timeout = setTimeout(() => {
+      cleanup();
+      reject(new Error("submitReply timeout"));
+    }, 8000);
+
+    window[cb] = (data) => {
+      clearTimeout(timeout);
+      cleanup();
+      resolve(data);
+    };
+
+    const params = new URLSearchParams({
+      action: "reply",
+      id: id,
+      passcode: passcode,
+      reply: reply,
+      callback: cb,
+    });
+    script.src = `${CONFIG.rsvpEndpoint}?${params.toString()}`;
+    script.onerror = () => {
+      clearTimeout(timeout);
+      cleanup();
+      reject(new Error("submitReply load error"));
+    };
+    document.body.appendChild(script);
+  });
+}

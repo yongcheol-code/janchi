@@ -1,7 +1,7 @@
 import "./styles.css";
 import { CONFIG } from "./config.js";
 import { createHeartBurst } from "./hearts.js";
-import { logAndSend, fetchFeed } from "./sheet.js";
+import { logAndSend, fetchFeed, submitReply as sheetSubmitReply } from "./sheet.js";
 import { getOwnerToken, getMyCommentIds, rememberMyComment, forgetMyComment, newCommentId } from "./identity.js";
 import {
   buildHeader,
@@ -222,6 +222,29 @@ export function mountApp(root) {
       state.comments = state.comments.map((c) => (c.id === id ? { ...c, likes: c.likes + 1 } : c));
       notify();
       logAndSend({ type: "comment_like", id });
+    },
+    openReplyComposer(comment) {
+      state.composerFor = null;
+      showOverlay("composer", { reply: { id: comment.id, existingReply: comment.reply || "" } });
+    },
+    async submitReply({ id, passcode, reply }) {
+      try {
+        const res = await sheetSubmitReply({ id, passcode, reply });
+        if (res?.ok) {
+          state.comments = state.comments.map((c) =>
+            c.id === id ? { ...c, reply, replyAt: new Date().toISOString() } : c
+          );
+          showOverlay(null);
+          notify();
+          toast.show(reply ? "답글을 남겼어요" : "답글을 삭제했어요");
+          return true;
+        }
+        toast.show(res?.error || "코드가 올바르지 않아요");
+        return false;
+      } catch {
+        toast.show("답글 전송에 실패했어요. 다시 시도해 주세요");
+        return false;
+      }
     },
     async submitRsvp({ name, phone, attendParty, attendWedding, count }) {
       const payload = {

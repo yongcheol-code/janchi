@@ -397,7 +397,18 @@ export function buildAllComments(state, actions, guestRef) {
       meta2.appendChild(editBtn);
       meta2.appendChild(deleteBtn);
     }
+    const replyBtn = el("button", "wed-allcomments__own-btn", c.reply ? "답글 수정" : "답글 달기");
+    replyBtn.addEventListener("click", () => actions.openReplyComposer(c));
+    meta2.appendChild(replyBtn);
     body.appendChild(meta2);
+
+    if (c.reply) {
+      const replyBox = el("div", "wed-allcomments__reply");
+      const replyText = el("span", "wed-allcomments__reply-text");
+      replyText.innerHTML = `<b style="font-weight:600">용철·유진 답글</b> ${escapeHtml(c.reply)}`;
+      replyBox.appendChild(replyText);
+      body.appendChild(replyBox);
+    }
     row.appendChild(body);
 
     const liked = s.likedCommentIds.has(c.id);
@@ -491,7 +502,8 @@ export function buildMapSection(state, actions, mapRef) {
 
       placeName.textContent = data.place;
       placeAddr.textContent = data.addrDisplay ?? data.addr;
-      placePhone.textContent = data.phone;
+      placePhone.textContent = data.phone || "";
+      placePhone.style.display = data.phone ? "" : "none";
 
       if (currentTab !== s.mapTab) {
         currentTab = s.mapTab;

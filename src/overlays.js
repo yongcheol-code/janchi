@@ -73,14 +73,39 @@ export function buildComposerSheet(host, backdrop, actions) {
   textInput.className = "wed-text-input";
   form.appendChild(textInput);
 
+  const passcodeInput = el("input");
+  passcodeInput.type = "password";
+  passcodeInput.placeholder = "신랑신부 비밀코드";
+  passcodeInput.className = "wed-text-input";
+  passcodeInput.hidden = true;
+  form.appendChild(passcodeInput);
+
   const submitBtn = el("button", "wed-solid-btn", "게시");
   form.appendChild(submitBtn);
   body.appendChild(form);
 
   let editingId = null;
+  let replyId = null;
 
-  function submit() {
+  async function submit() {
     const text = textInput.value.trim();
+
+    if (replyId) {
+      const passcode = passcodeInput.value.trim();
+      if (!passcode) {
+        actions.toastShow("비밀코드를 입력해 주세요");
+        return;
+      }
+      const prevLabel = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = "저장 중…";
+      const ok = await actions.submitReply({ id: replyId, passcode, reply: text });
+      submitBtn.disabled = false;
+      submitBtn.textContent = prevLabel;
+      if (ok) passcodeInput.value = "";
+      return;
+    }
+
     if (!text) return;
     if (editingId) {
       actions.editComment(editingId, text);
@@ -98,6 +123,9 @@ export function buildComposerSheet(host, backdrop, actions) {
   textInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter") submit();
   });
+  passcodeInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") submit();
+  });
 
   const close = () => actions.closeOverlays();
   closeBtn.addEventListener("click", close);
@@ -111,10 +139,23 @@ export function buildComposerSheet(host, backdrop, actions) {
       sheet.hidden = !open;
       if (!open) return;
       editingId = opts.edit?.id ?? null;
-      if (editingId) {
+      replyId = opts.reply?.id ?? null;
+
+      if (replyId) {
+        titleEl.textContent = "용철·유진 답글";
+        infoText.hidden = true;
+        nameInput.hidden = true;
+        passcodeInput.hidden = false;
+        passcodeInput.value = "";
+        textInput.placeholder = "답글 내용을 남겨주세요 (비우고 저장하면 삭제)";
+        textInput.value = opts.reply.existingReply ?? "";
+        submitBtn.textContent = "답글 저장";
+      } else if (editingId) {
         titleEl.textContent = "댓글 수정";
         infoText.hidden = true;
         nameInput.hidden = true;
+        passcodeInput.hidden = true;
+        textInput.placeholder = "댓글 달기…";
         textInput.value = opts.edit.text ?? "";
         submitBtn.textContent = "저장";
       } else {
@@ -122,6 +163,8 @@ export function buildComposerSheet(host, backdrop, actions) {
         infoText.hidden = false;
         nameInput.hidden = false;
         nameInput.value = opts.guestName ?? "";
+        passcodeInput.hidden = true;
+        textInput.placeholder = "댓글 달기…";
         textInput.value = "";
         submitBtn.textContent = "게시";
       }

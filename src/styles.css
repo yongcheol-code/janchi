@@ -724,6 +724,21 @@ button {
 .wed-allcomments__like-btn.is-liked {
   color: var(--wed-accent);
 }
+.wed-allcomments__reply {
+  margin-top: 6px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--sf-gray-50);
+}
+.wed-allcomments__reply-text {
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--sf-content-02);
+}
+.wed-allcomments__reply-text b {
+  color: var(--wed-accent);
+  margin-right: 4px;
+}
 
 .wed-comment__avatar {
   flex: none;
