@@ -259,9 +259,8 @@ button {
   height: 100%;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
-  /* 세로 스크롤 피드 안에 중첩된 가로 캐러셀이라, 터치 제스처가 부모(세로)로 새는 걸 막는다 */
-  touch-action: pan-x;
-  overscroll-behavior-x: contain;
+  /* touch-action:pan-x를 강제했더니 오히려 세로 피드 스크롤이 막혀서 뺐다.
+     사진 넘기기는 좌우 화살표 버튼으로 처리하니 제스처는 브라우저 기본값에 맡긴다. */
 }
 .wed-carousel__slide {
   position: relative;
