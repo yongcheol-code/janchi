@@ -97,10 +97,10 @@ export const CONFIG = {
     captionExpanded:
       "같이 간 여행이 백 번쯤, 싸운 것도 비슷하게 백 번쯤. 프러포즈는 눈치를 3개월 전부터 챘지만 모른 척했습니다. 그렇게 여기까지 왔습니다.",
     photos: [
-      "post-2-1.mp4", "post-2-2.jpg", "post-2-3.jpg", "post-2-4.jpg", "post-2-5.jpg",
-      "post-2-6.jpg", "post-2-7.mp4", "post-2-8.jpg", "post-2-9.jpg", "post-2-10.jpg",
+      "post-2-1.mp4", "post-2-2.jpg", "post-2-3.jpg", "post-2-4.jpg", "post-2-5.mp4",
+      "post-2-6.jpg", "post-2-7.jpg", "post-2-8.jpg", "post-2-9.jpg", "post-2-10.jpg",
       "post-2-11.jpg", "post-2-12.jpg", "post-2-13.jpg", "post-2-14.jpg", "post-2-15.jpg",
-      "post-2-16.jpg", "post-2-17.jpg", "post-2-18.jpg", "post-2-19.jpg", "post-2-20.jpg",
+      "post-2-16.jpg", "post-2-17.jpg", "post-2-18.jpg",
     ],
   },
 
@@ -110,10 +110,9 @@ export const CONFIG = {
       label: "우리의 이야기",
       caption: "여름과 바다, 술을 좋아하는<br>용철과 유진의<br>이야기를 만나보세요.",
       photos: [
-        "story-a-1.jpg", "story-a-2.jpg", "story-a-3.jpg", "story-a-4.jpg", "story-a-5.jpg",
+        "story-a-1.jpg", "story-a-2.jpg", "story-a-3.mp4", "story-a-4.jpg", "story-a-5.jpg",
         "story-a-6.jpg", "story-a-7.jpg", "story-a-8.jpg", "story-a-9.jpg", "story-a-10.jpg",
-        "story-a-11.jpg", "story-a-12.mp4", "story-a-13.jpg", "story-a-14.jpg", "story-a-15.jpg",
-        "story-a-16.jpg",
+        "story-a-11.jpg", "story-a-12.jpg", "story-a-13.jpg",
       ],
     },
     {
