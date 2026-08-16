@@ -3,7 +3,7 @@
 // 이 링크는 청첩장 파티 공지용으로 먼저 배포되므로 파티가 기본값이다.
 
 export const CONFIG = {
-  rsvpEndpoint: "", // rsvp-google-apps-script.gs 배포 후 .../exec URL
+  rsvpEndpoint: "https://script.google.com/macros/s/AKfycbxd6dRqV_GYU-cmK9ZNby80Hlm8jFCseVSsN1V8ra_j6VzkuPo_KAHXFiWd23yDOJN3/exec",
 
   groom: "조용철",
   bride: "김유진",
