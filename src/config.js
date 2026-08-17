@@ -52,8 +52,8 @@ export const CONFIG = {
     placeSub: "더채플앳청담 · 서울 강남구",
     floor: "더채플앳청담 3층",
     addr: "서울 강남구 선릉로 757",
-    addrDisplay: "서울 강남구 선릉로 757 · 3층",
-    phone: "02-0000-0000", // TODO: 실제 번호로 교체
+    addrDisplay: "서울 강남구 선릉로 757 더채플앳청담 커티지홀",
+    phone: "", // 전화번호 미기재(요청 반영)
     lat: 37.5236,
     lng: 127.0473,
     naverMapUrl: "https://naver.me/5ne4oSX1",
