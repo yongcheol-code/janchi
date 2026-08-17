@@ -62,7 +62,7 @@ export const CONFIG = {
     mapDesc: "지하 주차 2시간 무료.<br>7호선 청담역 13번 출구에서 도보 8분, 셔틀은 10분 간격으로 운행합니다.",
     ceremonyTime: "11:00",
     ceremonyMeridiem: "오전",
-    ceremonyDesc: "늦지 마세요 여러분! 주차 편하게 하시고 맛있는 음식 많이 드시라고 일부러 첫 타임으로 잡았습니다.",
+    ceremonyDesc: "늦지 마세요 여러분! 주차 편하게 하시고<br>맛있는 음식 많이 드시라고 일부러<br>첫 타임으로 잡았습니다.",
   },
   jeju: {
     label: "제주 잔치",
