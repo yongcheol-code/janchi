@@ -39,7 +39,7 @@ function createCountAnimator(el, formatText) {
     if (shown === target) return;
     cancelAnimationFrame(raf);
     const from = shown;
-    const duration = 600;
+    const duration = 1500;
     const start = performance.now();
     function tick(now) {
       const t = Math.min(1, (now - start) / duration);
