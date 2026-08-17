@@ -20,12 +20,12 @@ export const CONFIG = {
   party: {
     label: "청첩장 파티",
     dateShort: "10.24(토)",
-    dateLabel: "10.24(토) 16–22시",
+    dateLabel: "10.24(토) 오후 4시~10시",
     calHeaderDate: "2026년 10월",
     calHeaderTime: "토요일 오후 4시",
     date: new Date(2026, 9, 24),
     place: "텅앤빈 청파",
-    placeSub: "텅앤빈 청파 · 16–22시",
+    placeSub: "텅앤빈 청파 · 오후 4시~10시",
     addr: "서울 용산구 청파로45길 14",
     phone: "", // 전화번호 미기재(요청 반영)
     lat: 37.5406,
