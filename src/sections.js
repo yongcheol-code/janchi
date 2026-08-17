@@ -340,7 +340,7 @@ export function buildCalendarSection(actions, calendarRef) {
     el(
       "span",
       "wed-calendar__hint",
-      "귀한 걸음 해주시는 분들께 여유롭고 맛있는 식사와 술을 대접해 드리고 싶습니다. 🥂 원활한 인원 파악을 위해 두 일정의 참석 여부를 각각 알려주시면 너무나 감사하겠습니다!"
+      "귀한 걸음 해주시는 분들께 여유롭고 맛있는 식사와 술을 대접해 드리고 싶습니다. 🥂 인원 파악을 위해 두 일정의 참석 여부를 꼭 알려주세요!"
     )
   );
 

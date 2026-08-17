@@ -36,8 +36,8 @@ export const CONFIG = {
     mapDesc:
       "편하신 시간에 자유롭게 들러주세요!<br>지하철 4호선 숙대입구역 8번/9번 출구 또는 1호선 남영역 1번 출구를 이용해주세요.<br>주차는 인근 공영주차장을 이용해 주세요.",
     schedule: [
-      { time: "16:00", title: "오픈", desc: "오시고 싶은 시간에 오셔서, 가고 싶을 때 가시면 됩니다", accent: false },
-      { time: "20:00", title: "메인 행사", desc: "신랑신부 인사 & 럭키드로우, 딱 이 시간에만 진행합니다", accent: true },
+      { time: "16:00", title: "오픈", desc: "오시고 싶은 시간에 오세요. 기다리고 있을게요.", accent: false },
+      { time: "20:00", title: "메인 행사", desc: "신랑신부 인사 & 럭키드로우", accent: true },
       { time: "22:00", title: "마무리", desc: "", accent: false },
     ],
   },
