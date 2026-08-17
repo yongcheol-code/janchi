@@ -41,6 +41,10 @@ function formatRelativeTime(iso) {
   return `${Math.floor(diffHour / 24)}일 전`;
 }
 
+// 브라우저(특히 카카오톡 인앱브라우저 등)가 이전 방문의 스크롤 위치를 되살리는 걸 막는다.
+// 청첩장은 매번 커버 게시물부터 시작해야 하므로 자동 복원에 맡기지 않는다.
+if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+
 export function mountApp(root) {
   const shell = document.createElement("div");
   shell.className = "wed-shell";
@@ -358,6 +362,7 @@ export function mountApp(root) {
   shell.appendChild(overlayHost);
 
   notify();
+  feedEl.scrollTop = 0;
 
   // 모두가 같은 방명록/좋아요를 보도록 시트에서 최신 데이터를 받아 시드 데이터 위에 얹는다.
   fetchFeed()

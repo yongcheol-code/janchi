@@ -71,12 +71,12 @@ export function buildHeader(actions) {
 }
 
 // 게시물 미디어 캐러셀 — 여러 장을 옆으로 스와이프, "n/N · 두 번 탭" 칩으로 위치 표시
-function buildMediaCarousel(files, postKey, actions, placeholder) {
+function buildMediaCarousel(files, postKey, actions, placeholder, priorityFirst = false) {
   const wrap = el("div", "wed-media wed-media--4x5");
   const track = el("div", "wed-carousel__track wed-scroll");
-  files.forEach((file) => {
+  files.forEach((file, i) => {
     const slide = el("div", "wed-carousel__slide");
-    slide.appendChild(mediaSlot(file, placeholder));
+    slide.appendChild(mediaSlot(file, placeholder, priorityFirst && i === 0));
     track.appendChild(slide);
   });
   wrap.appendChild(track);
@@ -120,7 +120,7 @@ function buildMediaCarousel(files, postKey, actions, placeholder) {
 
 function buildFeedPost(
   actions,
-  { postKey, subText, files, placeholder, caption, captionExpanded, showBookmark, borderTop }
+  { postKey, subText, files, placeholder, caption, captionExpanded, showBookmark, borderTop, priorityFirst }
 ) {
   const article = el("article", "wed-post");
   if (borderTop) article.style.borderTop = "1px solid var(--sf-divider)";
@@ -134,7 +134,7 @@ function buildFeedPost(
   head.appendChild(iconBtn("moreHorizontal", 20, () => actions.openShare()));
   article.appendChild(head);
 
-  article.appendChild(buildMediaCarousel(files, postKey, actions, placeholder));
+  article.appendChild(buildMediaCarousel(files, postKey, actions, placeholder, priorityFirst));
 
   const actionsRow = el("div", "wed-post-actions");
   const likeBtn = iconBtn("heart", 26, (e) => actions.onLike(e, postKey));
@@ -194,6 +194,7 @@ export function buildCoverPost(state, actions) {
     caption: CONFIG.cover.caption,
     captionExpanded: CONFIG.cover.captionExpanded,
     showBookmark: true,
+    priorityFirst: true,
   });
 }
 
