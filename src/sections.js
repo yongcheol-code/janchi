@@ -29,6 +29,30 @@ function escapeHtml(str) {
   );
 }
 
+// 좋아요 숫자가 고정 시드값 -> 실제 값으로 훅 바뀌면 어색해서, 처음 보일 때부터
+// 항상 1부터 세어 올라가는 애니메이션을 준다(이후 값이 갱신될 때도 자연스럽게 이어서 카운트).
+function createCountAnimator(el, formatText) {
+  let shown = null;
+  let raf = null;
+  return function setCount(target) {
+    if (shown === null) shown = target > 0 ? 1 : 0;
+    if (shown === target) return;
+    cancelAnimationFrame(raf);
+    const from = shown;
+    const duration = 600;
+    const start = performance.now();
+    function tick(now) {
+      const t = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - t, 3); // ease-out-cubic
+      const value = Math.round(from + (target - from) * eased);
+      el.textContent = formatText(value);
+      shown = value;
+      if (t < 1) raf = requestAnimationFrame(tick);
+    }
+    raf = requestAnimationFrame(tick);
+  };
+}
+
 // 아바타는 이모지 페어(사용자 확정 사항)로 통일 — 게시물 헤더/모든 댓글/스토리 뷰어 4곳에서 재사용
 function buildAvatar(className = "wed-post-head__avatar") {
   const avatar = el("span", className);
@@ -150,6 +174,7 @@ function buildFeedPost(
   const footer = el("div", "wed-post-footer");
   const likesText = el("span", "wed-post-footer__likes");
   footer.appendChild(likesText);
+  const setLikesCount = createCountAnimator(likesText, (n) => `좋아요 ${n.toLocaleString("ko-KR")}개`);
 
   const captionP = el("p", "wed-post-footer__caption");
   const captionBody = el("b", "", `${CONFIG.handle} `);
@@ -175,7 +200,7 @@ function buildFeedPost(
   return {
     el: article,
     update(s) {
-      likesText.textContent = `좋아요 ${s.postLikes[postKey].toLocaleString("ko-KR")}개`;
+      setLikesCount(s.postLikes[postKey]);
       likeBtn.replaceChildren(icon(s.postLiked[postKey] ? "heartFill" : "heart", 26));
       likeBtn.style.color = s.postLiked[postKey] ? "var(--wed-accent)" : "";
       const count = s.comments.filter((c) => c.post === postKey).length;
@@ -396,6 +421,7 @@ export function buildAllComments(state, actions, guestRef) {
   const totalLikesLabel = el("span", "", "");
   metaRow.appendChild(totalLikesLabel);
   article.appendChild(metaRow);
+  const setTotalLikes = createCountAnimator(totalLikesLabel, (n) => `좋아요 합계 ${n.toLocaleString("ko-KR")}개`);
 
   const list = el("div", "wed-allcomments__list");
   article.appendChild(list);
@@ -451,7 +477,7 @@ export function buildAllComments(state, actions, guestRef) {
     update(s) {
       countLabel.textContent = `댓글 ${s.comments.length}개`;
       const total = Object.values(s.postLikes).reduce((sum, n) => sum + n, 0);
-      totalLikesLabel.textContent = `좋아요 합계 ${total.toLocaleString("ko-KR")}개`;
+      setTotalLikes(total);
       const visible = s.comments.slice(0, s.visibleCommentCount);
       list.replaceChildren(...visible.map((c) => buildRow(c, s)));
       const remaining = s.comments.length - visible.length;
