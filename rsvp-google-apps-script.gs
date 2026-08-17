@@ -43,7 +43,7 @@ var GUEST_HEADERS = ['id', '작성시각', 'post', '이름', '메시지', '좋�
 var META_SHEET = 'Meta';
 var META_HEADERS = ['key', 'value'];
 var LIKE_KEYS = ['cover', 'post2', 'guest'];
-var LIKE_SEED = { cover: 0, post2: 0, guest: 0 };
+var LIKE_SEED = { cover: 127, post2: 89, guest: 0 };
 
 function doPost(e) {
   var lock = LockService.getScriptLock();

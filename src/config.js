@@ -11,7 +11,7 @@ export const CONFIG = {
   wordmark: "용철♥유진, 이제 결혼합니다",
   avatarEmoji: "🧔🏻‍♂️👩🏻",
 
-  likeSeed: { cover: 0, post2: 0, guest: 0 },
+  likeSeed: { cover: 127, post2: 89, guest: 0 },
   heartCombo: true,
 
   // 캘린더/지도 탭 순서: 파티가 0번(기본), 결혼식 1번, 제주 2번
