@@ -141,13 +141,7 @@ export const CONFIG = {
   ],
 
   // post: 'cover' | 'post2' | 'guest' — 어느 게시물에 달린 댓글인지
-  comments: [
-    { id: 1, post: "cover", name: "park_jh", initial: "ㅂ", text: "드디어! 10년 채운 커플 실존했네 축하해 🎉", time: "2시간", likes: 12, liked: false },
-    { id: 2, post: "post2", name: "seoyeon.k", initial: "ㅅ", text: "신부님 화보 뭐야… 연예인 데뷔하는 줄", time: "4시간", likes: 8, liked: false },
-    { id: 3, post: "cover", name: "teamlead_choi", initial: "ㅊ", text: "신랑 그날 연차 승인해줌. 결재 완료.", time: "6시간", likes: 31, liked: false },
-    { id: 4, post: "cover", name: "minho__", initial: "ㅁ", text: "축의금은 성의껏, 밥은 배부르게 먹겠습니다", time: "8시간", likes: 5, liked: false },
-    { id: 5, post: "guest", name: "jiwon.lee", initial: "ㅈ", text: "부케 예약합니다 (진심)", time: "12시간", likes: 17, liked: false },
-  ],
+  comments: [],
 
   shareLinkUrl: "https://yongcheol-code.github.io/janchi/",
   kakaoJsKey: "409d7b21bf245a094eab2df47c11f025",
