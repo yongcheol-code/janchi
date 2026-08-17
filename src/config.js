@@ -11,7 +11,7 @@ export const CONFIG = {
   wordmark: "용철♥유진, 이제 결혼합니다",
   avatarEmoji: "🧔🏻‍♂️👩🏻",
 
-  likeSeed: { cover: 1000000, post2: 8420, guest: 2048 },
+  likeSeed: { cover: 0, post2: 0, guest: 0 },
   heartCombo: true,
 
   // 캘린더/지도 탭 순서: 파티가 0번(기본), 결혼식 1번, 제주 2번
@@ -117,7 +117,7 @@ export const CONFIG = {
       caption: "여름과 바다, 술을 좋아하는<br>용철과 유진의<br>이야기를 만나보세요.",
       photos: [
         "story-a-1.jpg", "story-a-2.jpg", "story-a-3.mp4", "story-a-4.jpg", "story-a-5.jpg",
-        "story-a-6.jpg", "story-a-7.jpg", "story-a-8.jpg", "story-a-9.jpg", "story-a-10.jpg",
+        "story-a-6.jpg", "story-a-7.jpg", "story-a-8.jpg", "story-a-10.jpg",
         "story-a-11.jpg", "story-a-12.jpg", "story-a-13.jpg",
       ],
     },
