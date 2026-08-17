@@ -34,7 +34,7 @@ export const CONFIG = {
     kakaoMapUrl: "https://place.map.kakao.com/693628217",
     venuePhoto: "venue-party.jpg",
     mapDesc:
-      "편하신 시간에 자유롭게 들러주세요!<br>지하철 4호선 숙대입구역 8번/9번 출구 또는 1호선 남영역 1번 출구를 이용해주세요.<br>주차는 인근 공영주차장을 이용해 주세요.",
+      "편하신 시간에 자유롭게 들러주세요!<br>지하철 4호선 숙대입구역 8번/9번 출구 또는 1호선 남영역 1번 출구를 이용해주세요. 주차는 인근 공영주차장을 이용해 주세요.",
     schedule: [
       { time: "16:00", title: "오픈", desc: "오시고 싶은 시간에 오세요. 기다리고 있을게요.", accent: false },
       { time: "20:00", title: "메인 행사", desc: "신랑신부 인사 & 럭키드로우", accent: true },
