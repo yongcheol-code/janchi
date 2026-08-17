@@ -545,7 +545,7 @@ export function buildFooter(actions) {
     el(
       "p",
       "wed-footer__thanks",
-      "스크롤 끝까지 봐주셔서 감사합니다.<br>이 게시물은 저장해두면 12월에 알림이 갑니다(는 거짓말, 직접 기억해 주세요)."
+      '끝까지 봐주셔서 감사합니다.<br>"가도 될까...?" 고민하고 계신 주변 분께, 이 링크를 꼭 공유해 주세요!'
     )
   );
   const shareBtn = el("button", "wed-footer__share");
