@@ -149,7 +149,8 @@ export const CONFIG = {
     { id: 5, post: "guest", name: "jiwon.lee", initial: "ㅈ", text: "부케 예약합니다 (진심)", time: "12시간", likes: 17, liked: false },
   ],
 
-  shareLinkUrl: "https://wedding.example.com/yongchul-yujin",
+  shareLinkUrl: "https://yongcheol-code.github.io/janchi/",
+  kakaoJsKey: "409d7b21bf245a094eab2df47c11f025",
 };
 
 // import.meta.env.BASE_URL은 vite.config.js의 base 값을 그대로 반영한다(로컬 "/", 배포 "/janchi/" 등).

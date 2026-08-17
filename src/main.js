@@ -302,7 +302,32 @@ export function mountApp(root) {
     },
     notifyKakao() {
       showOverlay(null);
-      toast.show("카카오톡 공유 SDK 연결 지점");
+      if (!window.Kakao) {
+        toast.show("카카오 SDK를 불러오지 못했어요");
+        return;
+      }
+      if (!window.Kakao.isInitialized()) window.Kakao.init(CONFIG.kakaoJsKey);
+      window.Kakao.Share.sendDefault({
+        objectType: "feed",
+        content: {
+          title: CONFIG.wordmark,
+          description: "청첩장 파티 - 10월 24일(토) / 서울 결혼식 - 12월 6일(일) / 제주 잔치 - 11월 예정",
+          imageUrl: "https://yongcheol-code.github.io/janchi/media/og.jpg",
+          link: {
+            mobileWebUrl: CONFIG.shareLinkUrl,
+            webUrl: CONFIG.shareLinkUrl,
+          },
+        },
+        buttons: [
+          {
+            title: "청첩장 보기",
+            link: {
+              mobileWebUrl: CONFIG.shareLinkUrl,
+              webUrl: CONFIG.shareLinkUrl,
+            },
+          },
+        ],
+      });
     },
     openRoute(app) {
       const v = CONFIG[state.mapTab];
