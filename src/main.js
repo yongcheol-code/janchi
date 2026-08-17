@@ -95,47 +95,14 @@ export function mountApp(root) {
     accountModal.setOpen(name === "account");
   }
 
-  // 하트 폭죽은 클릭마다 터지지만, 서버 전송은 900ms 동안 모아서 한 번에 보낸다.
-  const pendingLikes = {};
-  const likeTimers = {};
-  function queueLikeSend(key) {
-    pendingLikes[key] = (pendingLikes[key] || 0) + 1;
-    clearTimeout(likeTimers[key]);
-    likeTimers[key] = setTimeout(() => {
-      const count = pendingLikes[key];
-      pendingLikes[key] = 0;
-      logAndSend({ type: "like", key, count });
-    }, 900);
-  }
-
-  // 900ms 안에 새로고침/탭 닫기가 일어나면 위 타이머가 못 돌고 좋아요가 유실된다.
-  // 페이지가 숨겨지기 직전에 밀린 좋아요를 sendBeacon으로 즉시 흘려보낸다.
-  function flushPendingLikes() {
-    for (const key of Object.keys(pendingLikes)) {
-      const count = pendingLikes[key];
-      if (!count) continue;
-      pendingLikes[key] = 0;
-      clearTimeout(likeTimers[key]);
-      if (!CONFIG.rsvpEndpoint) continue;
-      const payload = JSON.stringify({ type: "like", key, count });
-      if (navigator.sendBeacon) {
-        navigator.sendBeacon(CONFIG.rsvpEndpoint, new Blob([payload], { type: "text/plain;charset=utf-8" }));
-      } else {
-        logAndSend({ type: "like", key, count });
-      }
-    }
-  }
-  document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "hidden") flushPendingLikes();
-  });
-  window.addEventListener("pagehide", flushPendingLikes);
-  window.addEventListener("beforeunload", flushPendingLikes);
-
+  // 클릭마다 즉시 전송한다(과거엔 900ms 모아 보냈지만, 그 창 안에 새로고침/닫기가
+  // 일어나면 타이머가 못 돌아 유실됐다). logAndSend의 fetch가 keepalive:true라
+  // 요청 도중 페이지가 언로드돼도 브라우저가 전송을 이어간다.
   function bumpPostLike(postKey) {
     state.postLikes[postKey] = (state.postLikes[postKey] || 0) + 1;
     state.postLiked[postKey] = true;
     notify();
-    queueLikeSend(postKey);
+    logAndSend({ type: "like", key: postKey, count: 1 });
   }
 
   const actions = {

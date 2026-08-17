@@ -15,9 +15,11 @@ export async function logAndSend(payload, storeKey) {
 
   if (!CONFIG.rsvpEndpoint) return;
   try {
+    // keepalive: 요청 도중 페이지가 언로드돼도 브라우저가 전송을 이어간다(새로고침/탭 닫기 유실 방지).
     await fetch(CONFIG.rsvpEndpoint, {
       method: "POST",
       mode: "no-cors",
+      keepalive: true,
       headers: { "Content-Type": "text/plain;charset=utf-8" },
       body: JSON.stringify(payload),
     });
