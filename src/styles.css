@@ -52,6 +52,16 @@ a {
 button {
   font-family: inherit;
 }
+/* 모바일에서 버튼/링크 탭 시 남는 파란 하이라이트·포커스 테두리 제거
+   (스토리 넘기기 탭 존에서 "파란 화면"처럼 보이던 원인) */
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+button:focus:not(:focus-visible),
+a:focus:not(:focus-visible) {
+  outline: none;
+}
 
 #app {
   height: 100dvh;
