@@ -399,6 +399,10 @@ export function buildAllComments(state, actions, guestRef) {
   const list = el("div", "wed-allcomments__list");
   article.appendChild(list);
 
+  const moreBtn = el("button", "wed-allcomments__more-btn");
+  moreBtn.addEventListener("click", () => actions.showMoreComments());
+  article.appendChild(moreBtn);
+
   function buildRow(c, s) {
     const row = el("div", "wed-allcomments__row");
     row.appendChild(el("span", "wed-comment__avatar", c.initial));
@@ -447,7 +451,15 @@ export function buildAllComments(state, actions, guestRef) {
       countLabel.textContent = `댓글 ${s.comments.length}개`;
       const total = Object.values(s.postLikes).reduce((sum, n) => sum + n, 0);
       totalLikesLabel.textContent = `좋아요 합계 ${total.toLocaleString("ko-KR")}개`;
-      list.replaceChildren(...s.comments.map((c) => buildRow(c, s)));
+      const visible = s.comments.slice(0, s.visibleCommentCount);
+      list.replaceChildren(...visible.map((c) => buildRow(c, s)));
+      const remaining = s.comments.length - visible.length;
+      if (remaining > 0) {
+        moreBtn.hidden = false;
+        moreBtn.textContent = `댓글 ${Math.min(remaining, 15)}개 더보기`;
+      } else {
+        moreBtn.hidden = true;
+      }
     },
   };
 }

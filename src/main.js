@@ -55,6 +55,7 @@ export function mountApp(root) {
     likedCommentIds: new Set(),
     myCommentIds: getMyCommentIds(),
     coupleVerified: isCoupleVerified(),
+    visibleCommentCount: 15,
     saved: false,
     calTab: "party",
     mapTab: "party",
@@ -219,6 +220,10 @@ export function mountApp(root) {
       state.comments = state.comments.map((c) => (c.id === id ? { ...c, likes: c.likes + 1 } : c));
       notify();
       logAndSend({ type: "comment_like", id });
+    },
+    showMoreComments() {
+      state.visibleCommentCount += 15;
+      notify();
     },
     openReplyComposer(comment) {
       state.composerFor = null;
