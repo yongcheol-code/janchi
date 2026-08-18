@@ -39,12 +39,12 @@ function createCountAnimator(el, formatText) {
     if (shown === target) return;
     cancelAnimationFrame(raf);
     const from = shown;
-    const duration = 1500;
+    const duration = 1800;
     const start = performance.now();
     function tick(now) {
       const t = Math.min(1, (now - start) / duration);
-      const eased = 1 - Math.pow(1 - t, 3); // ease-out-cubic
-      const value = Math.round(from + (target - from) * eased);
+      // 처음에 훅 튀었다가 끝에서 늘어지면 오히려 헷갈려서, 일정한 속도로 세어 올라가게 한다.
+      const value = Math.round(from + (target - from) * t);
       el.textContent = formatText(value);
       shown = value;
       if (t < 1) raf = requestAnimationFrame(tick);
